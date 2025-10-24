@@ -1,0 +1,1350 @@
+{
+  "name": "FractionalCOO",
+  "nodes": [
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        944,
+        672
+      ],
+      "id": "fb8eadce-24eb-4180-9218-893dfd21bbe6",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "VoHMb7O55rqzXqOK",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        1184,
+        672
+      ],
+      "id": "b41cfd65-f248-485a-a032-b01e9d62a145",
+      "name": "Think"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        1088,
+        672
+      ],
+      "id": "7a940e0a-dfcb-4f37-881f-f9cb9fea957a",
+      "name": "Postgres Chat Memory",
+      "notesInFlow": true,
+      "credentials": {
+        "postgres": {
+          "id": "nlmhbEPOAjGBkEBE",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "topN": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.rerankerCohere",
+      "typeVersion": 1,
+      "position": [
+        1616,
+        672
+      ],
+      "id": "8aaac4b8-6ef0-4d27-b53a-5848bb6bf3b7",
+      "name": "Reranker Cohere",
+      "credentials": {
+        "cohereApi": {
+          "id": "IuL3lDpaELc0U8vs",
+          "name": "CohereApi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        1296,
+        672
+      ],
+      "id": "99e21006-2bf8-4a16-bc20-a1be2ff20ecc",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1456,
+        672
+      ],
+      "id": "869fca01-ed25-4361-a690-a66beb3c3019",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "VoHMb7O55rqzXqOK",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"title\": \"Short meeting title or headline\",\n  \"summary\": \"Brief summary of the meeting with important points\",\n  \"decisions\": [\"Decision 1\", \"Decision 2\"],\n  \"attendees\": {\n    \"attendee1\": {\"name\": \"Full Name\", \"email\": \"email_if_available\"},\n    \"attendee2\": {\"name\": \"Full Name\", \"email\": \"\"}\n  },\n  \"action_items\": {\n    \"item1\": {\"assignee\": \"Full Name\", \"tasks\": [\"task 1\", \"task 2\"]},\n    \"item2\": {\"assignee\": \"Full Name\", \"tasks\": [\"task 1\"]}\n  },\n  \"next_steps\": [\"Step 1\", \"Step 2\"]\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        336,
+        -64
+      ],
+      "id": "54da976c-c6e5-494e-9456-6cd5c92d6fe7",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1CTRZEU4yJgooLPEkxoeN-q1b2qC5KpSPbSnRMeX5AGA",
+          "mode": "list",
+          "cachedResultName": "DataBase",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CTRZEU4yJgooLPEkxoeN-q1b2qC5KpSPbSnRMeX5AGA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CTRZEU4yJgooLPEkxoeN-q1b2qC5KpSPbSnRMeX5AGA/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Meeting ID": "={{ $('Get ID, Start Date, Duration and Title').item.json['Meeting ID'] }}",
+            "Decisions": "={{ $json.output.decisions }}",
+            "Attendees": "={{ $json.output.attendees }}",
+            "Action Items": "={{ $json.output.action_items }}",
+            "Summary": "={{ $json.output.summary }}",
+            "Title": "={{ !$('Get ID, Start Date, Duration and Title').item.json.Title || $('Get ID, Start Date, Duration and Title').item.json.Title === 'Impromptu Zoom Meeting' ? $json.output.title : $('Get ID, Start Date, Duration and Title').item.json.Title }}",
+            "Next Steps": "={{ $json.output.next_steps }}",
+            "Start Date": "={{ $('Get ID, Start Date, Duration and Title').item.json[\"Start Date\"] }}",
+            "Duration": "={{ $('Get ID, Start Date, Duration and Title').item.json.Duration }}"
+          },
+          "matchingColumns": [
+            "Meeting ID"
+          ],
+          "schema": [
+            {
+              "id": "Meeting ID",
+              "displayName": "Meeting ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Start Date",
+              "displayName": "Start Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Duration",
+              "displayName": "Duration",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Attendees",
+              "displayName": "Attendees",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Decisions",
+              "displayName": "Decisions",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Action Items",
+              "displayName": "Action Items",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Next Steps",
+              "displayName": "Next Steps",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        656,
+        -240
+      ],
+      "id": "b2974f41-cfd5-41db-80c5-af6498d4cd1a",
+      "name": "Update Fields",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "SHzE2FQJawAWxNLt",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "=Title/Metting Date {{ $('Convert to JSON Format').item.json.Title }} / {{ $('Convert to JSON Format').item.json[\"Start Date\"] }}\nSummary/Meeting Date:\n{{ $('Convert to JSON Format').item.json.Summary }} / {{ $('Convert to JSON Format').item.json[\"Start Date\"] }}\nDecisions/Meeting Date:\n- {{ $json.Decisions.join(\"\\n- \") }} / {{ $('Convert to JSON Format').item.json[\"Start Date\"] }}\nAction Items/Meeting Date:\n{{ Object.values($('Convert to JSON Format').item.json[\"Action Items\"]).map(a => a.assignee + \" Tasks: \" + a.tasks.join(\", \")).join(\"\\n\") }} / {{ $('Convert to JSON Format').item.json[\"Start Date\"] }}\nNext Steps/Meeting Date:\n- {{ $json[\"Next Steps\"].join(\"\\n- \") }} / {{ $('Convert to JSON Format').item.json[\"Start Date\"] }}",
+        "textSplittingMode": "custom",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "Meeting Date",
+                "value": "=Meeting Date: {{ $('Convert to JSON Format').item.json[\"Start Date\"] }}"
+              },
+              {
+                "name": "Title",
+                "value": "={{ $('Convert to JSON Format').item.json.Title }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        1376,
+        -64
+      ],
+      "id": "478837a3-1874-488d-8d50-afbfe2862ec6",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "content": "## Insert Data Into Vector Storage",
+        "height": 560,
+        "width": 390,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1248,
+        -304
+      ],
+      "typeVersion": 1,
+      "id": "54b7798a-e9c1-45a9-9bb0-68120abe4e49",
+      "name": "Sticky Note14"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1280,
+        -16
+      ],
+      "id": "5add87b2-e75f-4b03-9847-bf65039bbe01",
+      "name": "Embeddings OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "VoHMb7O55rqzXqOK",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analyze the following transcript and extract the title, summary, decisions, attendees, action items, and next steps.  \nReturn ONLY valid JSON in the format described.\n\nTranscript:\n{{ $json.content }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are an AI assistant that analyzes meeting transcripts and extracts structured information.  \nAlways output ONLY valid JSON in the following format:\n\n{\n  \"title\": \"Short meeting title or headline\",\n  \"summary\": \"Brief summary of the meeting with important points\",\n  \"decisions\": [\"Decision 1\", \"Decision 2\"],\n  \"attendees\": {\n    \"attendee1\": {\"name\": \"Full Name\", \"email\": \"email_if_available\"},\n    \"attendee2\": {\"name\": \"Full Name\", \"email\": \"\"}\n  },\n  \"action_items\": {\n    \"item1\": {\"assignee\": \"Full Name\", \"tasks\": [\"task 1\", \"task 2\"]}\n  },\n  \"next_steps\": [\"Step 1\", \"Step 2\"]\n}\n\nRules:\n- Extract a clear **title** that describes the main topic or outcome.\n- **summary** should highlighting the important points, don't skip any point.  \n- **decisions** = decisions made during the meeting.  \n- **attendees** = people listed in the transcript (name + email if available, otherwise leave email as \"\").  \n- **action_items** = responsibilities assigned to specific people, grouped under each assignee.  \n- **next_steps** = general follow-up actions or collective goals discussed in the meeting.  \n- Output must be pure JSON without explanations, comments, or extra text.  "
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        272,
+        -240
+      ],
+      "id": "bbacbab9-c80d-4393-bd3c-7d37b56ece3a",
+      "name": "Field Generator",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "content": "## Get Transcript, Start Date and Title",
+        "height": 208,
+        "width": 1206,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        208,
+        -544
+      ],
+      "typeVersion": 1,
+      "id": "27639337-a37e-437f-93ff-24b63ca0d333",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Generate Fields",
+        "height": 464,
+        "width": 390,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        208,
+        -304
+      ],
+      "typeVersion": 1,
+      "id": "c00802d3-942e-4537-8d70-461781b22ce8",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "chunkSize": 3000,
+        "chunkOverlap": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        1376,
+        112
+      ],
+      "id": "518e05ec-0590-4468-b2e4-4cde9229b620",
+      "name": "Recursive Character Text Splitter"
+    },
+    {
+      "parameters": {
+        "content": "## Chat Input",
+        "height": 224,
+        "width": 246,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        176,
+        320
+      ],
+      "typeVersion": 1,
+      "id": "ac9e7806-0e56-40cc-aa20-edb1ca2b4df5",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Memory, LLM",
+        "height": 208,
+        "width": 496,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        896,
+        608
+      ],
+      "typeVersion": 1,
+      "id": "c9a4d884-58d9-424b-b204-fbb15e68f71b",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Vector Storage",
+        "height": 400,
+        "width": 320,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1408,
+        416
+      ],
+      "typeVersion": 1,
+      "id": "27939eaf-2cd7-48c1-b8f8-2c76bf923845",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        1328,
+        -240
+      ],
+      "id": "dbc650c1-7907-4766-92ae-23fbb2bb45a5",
+      "name": "Add Document to Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "dGQLhQzs7EW7DRzP",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// JavaScript Code Node for Converting Google Sheets Data to JSON Format\n// This code handles dynamic meeting data with varying lengths and structures\n\n// Main conversion function\nfunction convertSheetsToJson(inputData) {\n  // Handle both single object and array inputs\n  const meetings = Array.isArray(inputData) ? inputData : [inputData];\n  \n  return meetings.map(meeting => {\n    // Helper function to format date strings\n    function formatDate(dateString) {\n      if (!dateString) return \"\";\n      \n      try {\n        // Handle various date formats from Google Sheets\n        const date = new Date(dateString);\n        if (isNaN(date.getTime())) return dateString; // Return original if invalid\n        \n        // Format as YYYY-MM-DD HH:MM:SS\n        return date.toISOString().slice(0, 19).replace('T', ' ');\n      } catch (error) {\n        return dateString; // Return original if parsing fails\n      }\n    }\n    \n    // Helper function to format duration\n    function formatDuration(durationString) {\n      if (!durationString) return \"\";\n      \n      // If already in HH:MM:SS format, pad with zeros if needed\n      if (typeof durationString === 'string' && durationString.includes(':')) {\n        const parts = durationString.split(':');\n        if (parts.length === 2) {\n          return `00:${parts[0].padStart(2, '0')}:${parts[1].padStart(2, '0')}`;\n        } else if (parts.length === 3) {\n          return `${parts[0].padStart(2, '0')}:${parts[1].padStart(2, '0')}:${parts[2].padStart(2, '0')}`;\n        }\n      }\n      \n      return durationString;\n    }\n    \n    // Helper function to safely get array data\n    function getArrayData(data) {\n      if (!data) return [];\n      if (Array.isArray(data)) return data;\n      if (typeof data === 'string') {\n        try {\n          const parsed = JSON.parse(data);\n          return Array.isArray(parsed) ? parsed : [data];\n        } catch {\n          return [data];\n        }\n      }\n      return [data];\n    }\n    \n    // Helper function to safely get object data\n    function getObjectData(data) {\n      if (!data) return {};\n      if (typeof data === 'object' && !Array.isArray(data)) return data;\n      if (typeof data === 'string') {\n        try {\n          const parsed = JSON.parse(data);\n          return typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};\n        } catch {\n          return {};\n        }\n      }\n      return {};\n    }\n    \n    // Build the output object with proper field mapping\n    const output = {\n      \"Meeting ID\": meeting.meeting_id || meeting[\"Meeting ID\"] || \"\",\n      \"Title\": meeting.title || meeting[\"Title\"] || \"\",\n      \"Transcript\": meeting.transcript || meeting[\"Transcript\"] || \"\",\n      \"Summary\": meeting.summary || meeting[\"Summary\"] || \"\",\n      \"Start Date\": formatDate(meeting.start_date || meeting[\"Start Date\"]),\n      \"Duration\": formatDuration(meeting.duration || meeting[\"Duration\"]),\n      \"Attendees\": getObjectData(meeting.attendees || meeting[\"Attendees\"]),\n      \"Decisions\": getArrayData(meeting.decisions || meeting[\"Decisions\"]),\n      \"Action Items\": getObjectData(meeting.action_items || meeting[\"Action Items\"]),\n      \"Next Steps\": getArrayData(meeting.next_steps || meeting[\"Next Steps\"])\n    };\n    \n    return output;\n  });\n}\n\n// Main execution for n8n Code Node\n// The input data is available as $input.all() in n8n\nconst inputData = $input.all();\n\n// Process each input item\nconst results = [];\n\ninputData.forEach(item => {\n  // Extract the actual meeting data from the item\n  const meetingData = item.json || item;\n  \n  // Convert the data\n  const converted = convertSheetsToJson(meetingData);\n  \n  // Add each converted meeting to results\n  converted.forEach(meeting => {\n    results.push({ json: meeting });\n  });\n});\n\n// Return the results for n8n\nreturn results;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1072,
+        -240
+      ],
+      "id": "e753c40c-b7d9-4690-ac96-caa2bdefb684",
+      "name": "Convert to JSON Format",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Retrieves meeting descriptions from Supabase vector store using semantic search, with reranking for relevance.  ",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "topK": 20,
+        "includeDocumentMetadata": false,
+        "useReranker": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        1456,
+        496
+      ],
+      "id": "6b2e33de-fd17-45eb-b436-5fb0bda872cd",
+      "name": "Search Past Meetings Vector DB",
+      "credentials": {
+        "supabaseApi": {
+          "id": "dGQLhQzs7EW7DRzP",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        864,
+        384
+      ],
+      "id": "e5417de0-3e13-4e0e-a140-9dbf819d0f71",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=# Fractional COO AI Agent System Prompt\n\n## Role Definition\nYou are a Fractional COO (Chief Operating Officer) AI Agent specializing in real estate operations management. Your mission is to analyze meeting data and provide strategic operational insights, actionable recommendations, and executive-level guidance for business growth and operational efficiency.\n\n## Time Understanding System\nTo effectively analyze time-based queries and meeting data, you have access to the following temporal context:\n\n**Current Time Reference:**\n- Today is: {{ $now.toFormat('yyyy-MM-dd') }} ({{ $now.toFormat('cccc') }})\n- Current time: {{ $now.toFormat('yyyy-MM-dd HH:mm:ss') }}\n\n**This Week:**\n- Monday: {{ $now.startOf('week').plus({days: 1}).toFormat('yyyy-MM-dd') }}\n- Tuesday: {{ $now.startOf('week').plus({days: 2}).toFormat('yyyy-MM-dd') }}\n- Wednesday: {{ $now.startOf('week').plus({days: 3}).toFormat('yyyy-MM-dd') }}\n- Thursday: {{ $now.startOf('week').plus({days: 4}).toFormat('yyyy-MM-dd') }}\n- Friday: {{ $now.startOf('week').plus({days: 5}).toFormat('yyyy-MM-dd') }}\n- Saturday: {{ $now.startOf('week').plus({days: 6}).toFormat('yyyy-MM-dd') }}\n- Sunday: {{ $now.startOf('week').plus({days: 7}).toFormat('yyyy-MM-dd') }}\n\n**Time References:**\n- Yesterday: {{ $now.minus({days: 1}).toFormat('yyyy-MM-dd') }}\n- Tomorrow: {{ $now.plus({days: 1}).toFormat('yyyy-MM-dd') }}\n\n**Last Week:**\n- Monday: {{ $now.minus({weeks: 1}).startOf('week').plus({days: 1}).toFormat('yyyy-MM-dd') }}\n- Tuesday: {{ $now.minus({weeks: 1}).startOf('week').plus({days: 2}).toFormat('yyyy-MM-dd') }}\n- Wednesday: {{ $now.minus({weeks: 1}).startOf('week').plus({days: 3}).toFormat('yyyy-MM-dd') }}\n- Thursday: {{ $now.minus({weeks: 1}).startOf('week').plus({days: 4}).toFormat('yyyy-MM-dd') }}\n- Friday: {{ $now.minus({weeks: 1}).startOf('week').plus({days: 5}).toFormat('yyyy-MM-dd') }}\n- Saturday: {{ $now.minus({weeks: 1}).startOf('week').plus({days: 6}).toFormat('yyyy-MM-dd') }}\n- Sunday: {{ $now.minus({weeks: 1}).startOf('week').plus({days: 7}).toFormat('yyyy-MM-dd') }}\n\n**Next Week:**\n- Monday: {{ $now.plus({weeks: 1}).startOf('week').plus({days: 1}).toFormat('yyyy-MM-dd') }}\n- Tuesday: {{ $now.plus({weeks: 1}).startOf('week').plus({days: 2}).toFormat('yyyy-MM-dd') }}\n- Wednesday: {{ $now.plus({weeks: 1}).startOf('week').plus({days: 3}).toFormat('yyyy-MM-dd') }}\n- Thursday: {{ $now.plus({weeks: 1}).startOf('week').plus({days: 4}).toFormat('yyyy-MM-dd') }}\n- Friday: {{ $now.plus({weeks: 1}).startOf('week').plus({days: 5}).toFormat('yyyy-MM-dd') }}\n- Saturday: {{ $now.plus({weeks: 1}).startOf('week').plus({days: 6}).toFormat('yyyy-MM-dd') }}\n- Sunday: {{ $now.plus({weeks: 1}).startOf('week').plus({days: 7}).toFormat('yyyy-MM-dd') }}\n\n**This Month:**\n- Beginning of month: {{ $now.startOf('month').toFormat('yyyy-MM-dd') }}\n- Middle of month: {{ $now.startOf('month').plus({days: 14}).toFormat('yyyy-MM-dd') }}\n- End of month: {{ $now.endOf('month').toFormat('yyyy-MM-dd') }}\n\n**Last Month:**\n- Beginning of last month: {{ $now.minus({months: 1}).startOf('month').toFormat('yyyy-MM-dd') }}\n- Middle of last month: {{ $now.minus({months: 1}).startOf('month').plus({days: 14}).toFormat('yyyy-MM-dd') }}\n- End of last month: {{ $now.minus({months: 1}).endOf('month').toFormat('yyyy-MM-dd') }}\n\n**Next Month:**\n- Beginning of next month: {{ $now.plus({months: 1}).startOf('month').toFormat('yyyy-MM-dd') }}\n- Middle of next month: {{ $now.plus({months: 1}).startOf('month').plus({days: 14}).toFormat('yyyy-MM-dd') }}\n- End of next month: {{ $now.plus({months: 1}).endOf('month').toFormat('yyyy-MM-dd') }}\n\n## Recent Meeting Data (AI Memory)\nYou have access to recent meeting information as contextual memory through the following data structure:\n{{ $json.data.map(meeting => `Information of the meeting at ${meeting[\"Start Date\"]}: Summary: ${meeting.Summary}, Duration: ${meeting.Duration}, Attendees: ${meeting.Attendees}, Action Items: ${meeting[\"Action Items\"]}, Next Steps: ${meeting[\"Next Steps\"]}`).join('\\n') }}\n\nThis data serves as your working memory for quick reference, but for detailed meeting information and comprehensive searches, always use the Supabase vector store.\n\n\nUse this temporal context to accurately interpret user requests about specific days, weeks, or time periods when searching for meeting data.\n\n## Available Tools and Usage Guidelines\n\n### 1. Think Tool\n**Purpose:** Strategic analysis and decision-making\n**When to use:** ALWAYS use this tool before taking any action or providing recommendations\n\n### 2. Search Past Meetings Vector DB Tool\n**Purpose:** Primary source for all meeting information retrieval from Supabase vector store\n**When to use:** \n- **PRIMARY TOOL** for all meeting-related queries (yesterday's meeting, last week's meetings, specific dates, etc.)\n- When users ask about meetings from any time period (yesterday, last week, beginning of month, end of month, etc.)\n- For both specific meeting details and general meeting information\n- When users reference meeting dates, topics, attendees, or any meeting content\n\n**Usage Guidelines:**\n- **Supabase Vector Store is Primary:** Always use this tool first for meeting information queries\n- **Recent Meeting Data as Memory:** Use the recent meeting data in your system message only as contextual memory to supplement vector search results\n- **Search Strategy:** Use relevant date ranges and key topics/keywords as search terms\n- **Comprehensive Coverage:** This tool covers all meeting data, whether recent or historical\n\n**Examples:**\n- \"What meetings happened yesterday?\" → Use vector search with yesterday's date\n- \"Tell me about last week's meetings\" → Use vector search with last week's date range\n- \"What did we discuss at the beginning of this month?\" → Use vector search with beginning of month date\n- \"Show me the meeting from October 13th about steel prices\" → Use vector search with \"October 13 steel prices\"\n\n### 3. Calculator Tool\n**Purpose:** Perform mathematical calculations for financial analysis, ROI calculations, and operational metrics\n\n## Operational Guidelines\n\n### Response Structure\n1. **Always start with the Think tool** to analyze the request\n2. **Gather relevant data** using appropriate tools\n3. **Provide executive summary** of key findings\n4. **Deliver actionable recommendations** with clear priorities\n5. **Specify next steps** for the Operations Director\n\n### Communication Style\n- Maintain professional, executive-level tone\n- Focus on strategic implications and business impact\n- Provide clear, actionable recommendations\n- Use data to support insights\n- Be concise but comprehensive\n\n### Data Analysis Focus\nWhen analyzing meeting data, prioritize:\n- Action items and completion status\n- Decision outcomes and implementation progress\n- Resource allocation and utilization\n- Timeline adherence and project milestones\n- Risk identification and mitigation strategies\n- Performance metrics and KPIs\n\n### Recommendation Categories\nStructure recommendations into:\n1. **Immediate Actions** (within 24-48 hours)\n2. **Short-term Initiatives** (within 1-2 weeks)\n3. **Strategic Priorities** (monthly/quarterly focus)\n4. **Process Improvements** (ongoing optimization)\n5. **Risk Mitigation** (preventive measures)\n\nRemember: Transform raw meeting data into strategic operational intelligence that drives business growth and operational excellence."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        1072,
+        384
+      ],
+      "id": "3a94149c-558d-4032-8ee3-6cb920a3f23c",
+      "name": "Fractional COO AI Agent"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1CTRZEU4yJgooLPEkxoeN-q1b2qC5KpSPbSnRMeX5AGA",
+          "mode": "list",
+          "cachedResultName": "DataBase",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CTRZEU4yJgooLPEkxoeN-q1b2qC5KpSPbSnRMeX5AGA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CTRZEU4yJgooLPEkxoeN-q1b2qC5KpSPbSnRMeX5AGA/edit#gid=0"
+        },
+        "options": {
+          "dataLocationOnSheet": {
+            "values": {
+              "rangeDefinition": "specifyRangeA1",
+              "range": "D1:E3"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        480,
+        432
+      ],
+      "id": "142003e8-bbaa-46eb-b709-6c6b5fd01d40",
+      "name": "Get Recent Meeting Data",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "SHzE2FQJawAWxNLt",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Update Fields",
+        "height": 224,
+        "width": 198,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        608,
+        -304
+      ],
+      "typeVersion": 1,
+      "id": "ff636c48-d2dd-4540-af9e-56c3ee0d21dc",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1CTRZEU4yJgooLPEkxoeN-q1b2qC5KpSPbSnRMeX5AGA",
+          "mode": "list",
+          "cachedResultName": "DataBase",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CTRZEU4yJgooLPEkxoeN-q1b2qC5KpSPbSnRMeX5AGA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CTRZEU4yJgooLPEkxoeN-q1b2qC5KpSPbSnRMeX5AGA/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Meeting ID",
+              "lookupValue": "={{ $json[\"Meeting ID\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        880,
+        -240
+      ],
+      "id": "11cb4631-8486-4014-a76a-a34b18df24e0",
+      "name": "Get Fields",
+      "executeOnce": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "SHzE2FQJawAWxNLt",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Get Fields",
+        "height": 224,
+        "width": 422,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        816,
+        -304
+      ],
+      "typeVersion": 1,
+      "id": "8a152257-292f-427d-890f-b946fcf1ce0e",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "I’m your AI COO, how can I help you today?",
+        "options": {
+          "subtitle": "Your COO, powered by AI",
+          "title": "Fractional COO",
+          "customCss": ":root {\n  font-size: 100%; /* Increased from 78% to 100% */\n  \n  /* Colors */\n  --chat--color-primary: #000000;\n  --chat--color-primary-shade-50: #333333;\n  --chat--color-primary-shade-100: #666666;\n  --chat--color-secondary: #ffffff;\n  --chat--color-secondary-shade-50: #f2f2f2;\n  --chat--color-white: #ffffff;\n  --chat--color-light: #f2f2f2;\n  --chat--color-light-shade-50: #e6e6e6;\n  --chat--color-light-shade-100: #cccccc;\n  --chat--color-medium: #999999;\n  --chat--color-dark: #000000;\n  --chat--color-disabled: #777777;\n  --chat--color-typing: #444444;\n\n  /* Base Layout */\n  --chat--spacing: 1rem;\n  --chat--border-radius: 0.25rem;\n  --chat--transition-duration: 0.15s;\n  --chat--font-family: (\n    -apple-system,\n    BlinkMacSystemFont,\n    'Segoe UI',\n    Roboto,\n    Oxygen-Sans,\n    Ubuntu,\n    Cantarell,\n    'Helvetica Neue',\n    sans-serif\n  );\n\n  /* Window Dimensions */\n  --chat--window--width: 400px;\n  --chat--window--height: 600px;\n  --chat--window--bottom: var(--chat--spacing);\n  --chat--window--right: var(--chat--spacing);\n  --chat--window--z-index: 9999;\n  --chat--window--border: 1px solid var(--chat--color-light-shade-50);\n  --chat--window--border-radius: var(--chat--border-radius);\n  --chat--window--margin-bottom: var(--chat--spacing);\n\n  /* Header Styles */\n  --chat--header-height: auto;\n  --chat--header--padding: var(--chat--spacing);\n  --chat--header--background: var(--chat--color-dark);\n  --chat--header--color: var(--chat--color-light);\n  --chat--header--border-top: none;\n  --chat--header--border-bottom: none;\n  --chat--header--border-left: none;\n  --chat--header--border-right: none;\n  --chat--heading--font-size: 2em;\n  --chat--subtitle--font-size: inherit;\n  --chat--subtitle--line-height: 0.001;\n\n  /* Message Styles */\n  --chat--message--font-size: 1.1rem; /* Increased from 1rem to 1.1rem */\n  --chat--message--padding: var(--chat--spacing);\n  --chat--message--border-radius: var(--chat--border-radius);\n  --chat--message-line-height: 1.5;\n  --chat--message--margin-bottom: calc(var(--chat--spacing) * 1);\n  --chat--message--bot--background: var(--chat--color-white);\n  --chat--message--bot--color: var(--chat--color-dark);\n  --chat--message--bot--border: none;\n  --chat--message--user--background: var(--chat--color-primary);\n  --chat--message--user--color: var(--chat--color-white);\n  --chat--message--user--border: none;\n  --chat--message--pre--background: rgba(0, 0, 0, 0.05);\n  --chat--messages-list--padding: var(--chat--spacing);\n\n  /* Toggle Button */\n  --chat--toggle--size: 64px;\n  --chat--toggle--width: var(--chat--toggle--size);\n  --chat--toggle--height: var(--chat--toggle--size);\n  --chat--toggle--border-radius: 50%;\n  --chat--toggle--background: var(--chat--color-primary);\n  --chat--toggle--hover--background: var(--chat--color-primary-shade-50);\n  --chat--toggle--active--background: var(--chat--color-primary-shade-100);\n  --chat--toggle--color: var(--chat--color-white);\n\n  /* Input Area */\n  --chat--textarea--height: 60px; /* Kept your increased height */\n  --chat--textarea--max-height: 30rem;\n  --chat--input--font-size: 1.5rem; /* Kept your increased size */\n  --chat--input--border: 0;\n  --chat--input--border-radius: 0;\n  --chat--input--padding: 0.8rem;\n  --chat--input--background: var(--chat--color-white);\n  --chat--input--text-color: initial;\n  --chat--input--line-height: 1.5;\n  --chat--input--placeholder--font-size: var(--chat--input--font-size);\n  --chat--input--border-active: 0;\n  --chat--input--left--panel--width: 2rem;\n\n  /* Button Styles */\n  --chat--button--color: var(--chat--color-light);\n  --chat--button--background: var(--chat--color-primary);\n  --chat--button--padding: calc(var(--chat--spacing) * 1 / 2) var(--chat--spacing);\n  --chat--button--border-radius: var(--chat--border-radius);\n  --chat--button--hover--color: var(--chat--color-light);\n  --chat--button--hover--background: var(--chat--color-primary-shade-50);\n  --chat--close--button--color-hover: var(--chat--color-primary);\n\n  /* Send and File Buttons */\n  --chat--input--send--button--background: var(--chat--color-white);\n  --chat--input--send--button--color: var(--chat--color-light);\n  --chat--input--send--button--background-hover: var(--chat--color-primary-shade-50);\n  --chat--input--send--button--color-hover: var(--chat--color-secondary-shade-50);\n  --chat--input--file--button--background: var(--chat--color-white);\n  --chat--input--file--button--color: var(--chat--color-secondary);\n  --chat--input--file--button--background-hover: var(--chat--input--file--button--background);\n  --chat--input--file--button--color-hover: var(--chat--color-secondary-shade-50);\n  --chat--files-spacing: 0.25rem;\n\n  /* Body and Footer */\n  --chat--body--background: var(--chat--color-light);\n  --chat--footer--background: var(--chat--color-light);\n  --chat--footer--color: var(--chat--color-dark);\n}\n\n/* You can override any class styles, too. Right-click inspect in Chat UI to find class to override. */\n.chat-message {\n  max-width: 90%;\n}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        240,
+        368
+      ],
+      "id": "88c77397-88b1-44e7-869c-71386a5cd6a3",
+      "name": "When chat message received",
+      "webhookId": "2d7d34e1-30df-4c39-8da3-cb734d2bc770"
+    },
+    {
+      "parameters": {
+        "content": "## Get Last Meeting Memory",
+        "height": 272,
+        "width": 534,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        432,
+        320
+      ],
+      "typeVersion": 1,
+      "id": "0b6297a7-851d-45ec-8ab2-65116b05a258",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "=MeetingID_{{ $json[\"Meeting ID\"] }}",
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "1uzMyGzs3_FeWdttXNVETbiyw-S8hl50e",
+            "mode": "list",
+            "cachedResultName": "Transcripts",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1uzMyGzs3_FeWdttXNVETbiyw-S8hl50e"
+          },
+          "includeTrashed": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        912,
+        -496
+      ],
+      "id": "5f2cb04f-15f3-4a8e-9ac6-43ddb6879c21",
+      "name": "Search Meeting ID",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "1iln3jDmF6jflAKq",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        272,
+        32
+      ],
+      "id": "60d4cf4f-dc6f-4d64-8844-b127cef18028",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "VoHMb7O55rqzXqOK",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Agent Core",
+        "height": 272,
+        "width": 416,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        976,
+        320
+      ],
+      "typeVersion": 1,
+      "id": "1849994c-d7ed-413c-a77b-07f40a38e341",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1CTRZEU4yJgooLPEkxoeN-q1b2qC5KpSPbSnRMeX5AGA",
+          "mode": "list",
+          "cachedResultName": "DataBase",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CTRZEU4yJgooLPEkxoeN-q1b2qC5KpSPbSnRMeX5AGA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CTRZEU4yJgooLPEkxoeN-q1b2qC5KpSPbSnRMeX5AGA/edit#gid=0"
+        },
+        "event": "rowAdded",
+        "options": {
+          "dataLocationOnSheet": {
+            "values": {
+              "rangeDefinition": "specifyRangeA1",
+              "range": "A1:Z1"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        256,
+        -496
+      ],
+      "id": "52917d43-4b40-4a6a-98cd-26572f674d2f",
+      "name": "When a Row Created, Get The First Row ",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "Q0xHzz5hhQEVIdnh",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "={{ $json.id }}"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        1072,
+        -496
+      ],
+      "id": "69e5e08c-c109-4ea7-8962-306c8334573c",
+      "name": "Get Data",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "z2HwXmmuZGffbQIW",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3f9545d3-550c-4329-a64f-a47d84e4ff76",
+              "name": "Meeting ID",
+              "value": "={{ $json.content.split(\"\\n\").find(line => line.startsWith(\"MeetingID:\")).split(\": \")[1] }}",
+              "type": "string"
+            },
+            {
+              "id": "407271ce-4d93-434e-b22d-0b803b1b4476",
+              "name": "Start Date",
+              "value": "={{ $json.content.split(\"\\n\").find(line => line.startsWith(\"StartDate:\")).split(\": \")[1] }}",
+              "type": "string"
+            },
+            {
+              "id": "a4386c74-62bd-4716-b4dd-5f916d2085d7",
+              "name": "Duration",
+              "value": "={{ \n  (() => {\n    const durationMin = parseFloat($json.content.split(\"\\n\").find(line => line.startsWith(\"Duration:\")).split(\": \")[1]);\n    const totalSec = Math.round(durationMin * 60);\n    const h = String(Math.floor(totalSec / 3600)).padStart(2,\"0\");\n    const m = String(Math.floor((totalSec % 3600) / 60)).padStart(2,\"0\");\n    const s = String(totalSec % 60).padStart(2,\"0\");\n    return `${h}:${m}:${s}`;\n  })()\n}}",
+              "type": "string"
+            },
+            {
+              "id": "f47ba902-16c7-471c-9d25-6da70f151a4a",
+              "name": "Title",
+              "value": "={{ $json.content.split(\"\\n\").find(line => line.startsWith(\"Title:\")).split(\": \")[1] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1248,
+        -496
+      ],
+      "id": "28963557-1fc5-4a03-bc8c-911b6d5a91cf",
+      "name": "Get ID, Start Date, Duration and Title"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "148b39e6-479d-4a1c-bb78-20005cb6c6dd",
+              "leftValue": "={{ $json[\"Meeting ID\"] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        432,
+        -496
+      ],
+      "id": "12d2ff8f-da90-4bf4-a924-d9f8d64b9f39",
+      "name": "If Meeting ID is valid"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f12573ad-fb4b-4d3c-ba83-73091f0cc040",
+              "leftValue": "={{ $json.Title }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "a34c30c8-11e4-47c0-9063-0fb448905daa",
+              "leftValue": "={{ $json.Summary }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "879d3327-3903-4269-87f0-23d12a22f4f2",
+              "leftValue": "={{ $json[\"Start Date\"] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "6767afc6-5a66-403f-8731-e85780dc1974",
+              "leftValue": "={{ $json.Duration }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "4a7b0dc3-2736-4251-8eff-725360039538",
+              "leftValue": "={{ $json.Attendees }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "89f78cc2-d860-476e-a728-d468feda7395",
+              "leftValue": "={{ $json.Decisions }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "31685032-4d60-4248-88d3-3a254346ce97",
+              "leftValue": "={{ $json[\"Action Items\"] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "84bf863b-ee57-46e0-93ae-fa34c98d23a1",
+              "leftValue": "={{ $json[\"Next Steps\"] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        640,
+        -512
+      ],
+      "id": "e7b2336e-c933-4e74-98c8-f03bf01633d5",
+      "name": "Rest of The Fields are Empty"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        640,
+        432
+      ],
+      "id": "e4153a89-8dc7-4b48-8d7a-edf8496e22de",
+      "name": "Aggregate"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Fractional COO AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "Fractional COO AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Fractional COO AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reranker Cohere": {
+      "ai_reranker": [
+        [
+          {
+            "node": "Search Past Meetings Vector DB",
+            "type": "ai_reranker",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "Fractional COO AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Search Past Meetings Vector DB",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Field Generator",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Fields": {
+      "main": [
+        [
+          {
+            "node": "Get Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Add Document to Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Add Document to Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Field Generator": {
+      "main": [
+        [
+          {
+            "node": "Update Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to JSON Format": {
+      "main": [
+        [
+          {
+            "node": "Add Document to Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Past Meetings Vector DB": {
+      "ai_tool": [
+        [
+          {
+            "node": "Fractional COO AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Fractional COO AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Recent Meeting Data": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Fields": {
+      "main": [
+        [
+          {
+            "node": "Convert to JSON Format",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Recent Meeting Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Meeting ID": {
+      "main": [
+        [
+          {
+            "node": "Get Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Field Generator",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Structured Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When a Row Created, Get The First Row ": {
+      "main": [
+        [
+          {
+            "node": "If Meeting ID is valid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Data": {
+      "main": [
+        [
+          {
+            "node": "Get ID, Start Date, Duration and Title",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get ID, Start Date, Duration and Title": {
+      "main": [
+        [
+          {
+            "node": "Field Generator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Meeting ID is valid": {
+      "main": [
+        [
+          {
+            "node": "Rest of The Fields are Empty",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rest of The Fields are Empty": {
+      "main": [
+        [
+          {
+            "node": "Search Meeting ID",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d936f7b7-9b90-49b2-8ad8-f41d1995195e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4a2952d750233c02800975f682ffd82d00294fb62c8e98c152bd79f86550ccf2"
+  },
+  "id": "odikMLiD4nXUcmQ5",
+  "tags": []
+}
